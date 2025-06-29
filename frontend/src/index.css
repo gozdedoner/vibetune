@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-family: "Outfit", sans-serif;
+}
+
+/* Dot stilini küçült ve koyu temaya uyarla */
+.slick-dots li button:before {
+  font-size: 10px;
+  color: gray;
+}
+.slick-dots li.slick-active button:before {
+  color: #9333ea; /* Tailwind'de primary */
+}

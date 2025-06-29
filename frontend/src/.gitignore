@@ -1,0 +1,8 @@
+# Ortam değişkenleri
+.env
+
+# Node modules
+node_modules/
+
+# Build dosyaları
+dist/
