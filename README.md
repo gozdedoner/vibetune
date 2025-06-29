@@ -10,7 +10,7 @@ VibeTune, kullanıcıdan aldığı metinsel prompt'a göre Spotify API üzerinde
 - ☁️ Vercel + Render deploy
 
 ## 🌐 Canlı Linkler
-- Frontend: [vibetune.vercel.app](https://vibetune.vercel.app)
-- Backend: [vibetune-backend-n3yo.onrender.com](https://vibetune-backend-n3yo.onrender.com)
+- Frontend: [https://vibetuneapp.vercel.app/)
+- Backend: (https://vibetune-backend-n3yo.onrender.com)
 
 
