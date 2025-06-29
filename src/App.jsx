@@ -19,10 +19,12 @@ import AIPlaylistPage from "./pages/AIPlaylistPage";
 import Layout from "./layout/Layout";
 import AIPlaylistModal from "./modals/AIPlaylistModal";
 
-// Spotify Access Token'ı kendi backend'inden al
+// 🔗 Spotify Access Token'ı canlı backend'den al
 const getAccessToken = async () => {
   try {
-    const response = await fetch("http://localhost:4000/api/token");
+    const response = await fetch(
+      "https://vibetune-backend-n3yo.onrender.com/api/token"
+    );
     if (!response.ok) {
       throw new Error("Token alınamadı");
     }
