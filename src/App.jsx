@@ -41,14 +41,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [aiPlaylist, setAiPlaylist] = useState([]);
+  const [library, setLibrary] = useState([]);
   const navigate = useNavigate();
 
+  // AI Playlist oluştur
   const handleGenerate = async (prompt) => {
     setIsLoading(true);
-
     try {
       if (!spotifyToken) throw new Error("Spotify token yok.");
-
       const response = await fetch(
         `https://api.spotify.com/v1/search?q=${encodeURIComponent(
           prompt
@@ -59,9 +59,7 @@ function App() {
           },
         }
       );
-
       const data = await response.json();
-
       if (data.tracks && data.tracks.items) {
         setAiPlaylist(data.tracks.items);
         setIsModalOpen(false);
@@ -74,6 +72,7 @@ function App() {
     }
   };
 
+  // Spotify token'ı al
   useEffect(() => {
     async function fetchToken() {
       const token = await getAccessToken();
@@ -113,10 +112,16 @@ function App() {
             path="/search"
             element={<Search spotifyToken={spotifyToken} />}
           />
-          <Route path="/library" element={<Library />} />
+          <Route path="/library" element={<Library library={library} />} />
           <Route
             path="/ai-playlist"
-            element={<AIPlaylistPage playlist={aiPlaylist} />}
+            element={
+              <AIPlaylistPage
+                playlist={aiPlaylist}
+                library={library}
+                setLibrary={setLibrary}
+              />
+            }
           />
         </Route>
       </Routes>

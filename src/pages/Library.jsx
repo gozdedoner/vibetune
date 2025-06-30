@@ -1,22 +1,43 @@
 import React from "react";
 
-const Library = () => {
+const Library = ({ library }) => {
   return (
-    <div className="p-6 text-white">
-      <h1 className="text-3xl font-bold mb-4">Kitaplığın</h1>
-      <p className="text-gray-400">
-        Kaydettiğin çalma listeleri burada görüntülenecek.
-      </p>
+    <div className="min-h-screen px-4 py-8 bg-white dark:bg-zinc-900 text-black dark:text-white">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-primary">📚 Kitaplığım</h1>
 
-      {/* Örnek çalma listesi */}
-      <ul className="mt-6 space-y-3">
-        <li className="bg-zinc-700 p-4 rounded-lg hover:bg-zinc-600 transition">
-          💾 Gece Yolculuğu
-        </li>
-        <li className="bg-zinc-700 p-4 rounded-lg hover:bg-zinc-600 transition">
-          💾 Sabah Enerjisi
-        </li>
-      </ul>
+        {library.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">
+            Henüz kitaplığına şarkı eklemedin.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {library.map((track, index) => (
+              <div
+                key={index}
+                className="bg-white/90 dark:bg-zinc-800/80 rounded-xl p-4 shadow hover:shadow-lg transition-all"
+              >
+                <img
+                  src={track.album?.images?.[0]?.url}
+                  alt={track.name}
+                  className="w-full h-48 object-cover rounded mb-3"
+                />
+                <h3 className="font-semibold truncate">{track.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                  {track.artists.map((a) => a.name).join(", ")}
+                </p>
+                {track.preview_url && (
+                  <audio
+                    controls
+                    src={track.preview_url}
+                    className="mt-3 w-full"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
