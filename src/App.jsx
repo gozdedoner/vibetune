@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -19,15 +20,18 @@ import AIPlaylistPage from "./pages/AIPlaylistPage";
 import Layout from "./layout/Layout";
 import AIPlaylistModal from "./modals/AIPlaylistModal";
 
-// 🔗 Spotify Access Token'ı canlı backend'den al
+// LocalStorage Fonksiyonları
+import {
+  getLibraryFromStorage,
+  saveLibraryToStorage,
+} from "./utils/libraryStorage";
+
+// Token alma
 const getAccessToken = async () => {
   try {
     const response = await fetch(
       "https://vibetune-backend-n3yo.onrender.com/api/token"
     );
-    if (!response.ok) {
-      throw new Error("Token alınamadı");
-    }
     const data = await response.json();
     return data.access_token;
   } catch (error) {
@@ -41,48 +45,49 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [aiPlaylist, setAiPlaylist] = useState([]);
-  const [library, setLibrary] = useState([]);
+  const [library, setLibrary] = useState(() => getLibraryFromStorage());
   const navigate = useNavigate();
 
-  // AI Playlist oluştur
-  const handleGenerate = async (prompt) => {
-    setIsLoading(true);
-    try {
-      if (!spotifyToken) throw new Error("Spotify token yok.");
-      const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-          prompt
-        )}&type=track&limit=8`,
-        {
-          headers: {
-            Authorization: `Bearer ${spotifyToken}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (data.tracks && data.tracks.items) {
-        setAiPlaylist(data.tracks.items);
-        setIsModalOpen(false);
-        navigate("/ai-playlist");
-      }
-    } catch (error) {
-      console.error("AI playlist oluşturulamadı:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // LocalStorage güncelle
+  useEffect(() => {
+    saveLibraryToStorage(library);
+  }, [library]);
 
-  // Spotify token'ı al
+  // Token çek
   useEffect(() => {
     async function fetchToken() {
       const token = await getAccessToken();
       if (token) {
         setSpotifyToken(token);
-        console.log("🎧 Spotify Access Token:", token);
       }
     }
     fetchToken();
   }, []);
+
+  // AI Playlist oluşturma
+  const handleGenerate = async (prompt) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+          prompt
+        )}&type=track&limit=8`,
+        {
+          headers: { Authorization: `Bearer ${spotifyToken}` },
+        }
+      );
+      const data = await response.json();
+      if (data.tracks?.items) {
+        setAiPlaylist(data.tracks.items);
+        setIsModalOpen(false);
+        navigate("/ai-playlist");
+      }
+    } catch (error) {
+      console.error("AI Playlist oluşturulamadı:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -112,7 +117,10 @@ function App() {
             path="/search"
             element={<Search spotifyToken={spotifyToken} />}
           />
-          <Route path="/library" element={<Library library={library} />} />
+          <Route
+            path="/library"
+            element={<Library library={library} setLibrary={setLibrary} />}
+          />
           <Route
             path="/ai-playlist"
             element={

@@ -1,13 +1,16 @@
 import React from "react";
-import { Music2, RefreshCcw, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Music2, RefreshCcw, ArrowLeft, Heart } from "lucide-react";
 
 const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
   const navigate = useNavigate();
 
-  const toggleLibrary = (track) => {
-    const isSaved = library.find((item) => item.id === track.id);
-    if (isSaved) {
+  const isInLibrary = (track) => {
+    return library.some((item) => item.id === track.id);
+  };
+
+  const toggleTrackInLibrary = (track) => {
+    if (isInLibrary(track)) {
       setLibrary(library.filter((item) => item.id !== track.id));
     } else {
       setLibrary([...library, track]);
@@ -25,7 +28,6 @@ const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
   return (
     <div className="min-h-screen px-4 py-8 bg-white dark:bg-zinc-900 text-black dark:text-white transition-all">
       <div className="max-w-6xl mx-auto">
-        {/* Üst Başlık + Butonlar */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-primary">
             <Music2 className="mr-2" />
@@ -51,12 +53,11 @@ const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
           </div>
         </div>
 
-        {/* Playlist Kartları */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {playlist.map((track, index) => (
+          {playlist.map((track) => (
             <div
-              key={index}
-              className="bg-white/90 dark:bg-zinc-800/80 backdrop-blur-md border border-gray-200 dark:border-zinc-700 rounded-xl shadow-md p-4 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
+              key={track.id}
+              className="bg-white/90 dark:bg-zinc-800/80 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-md p-4 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative"
             >
               <img
                 src={track.album?.images?.[0]?.url}
@@ -68,23 +69,19 @@ const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
                 {track.artists?.map((artist) => artist.name).join(", ")}
               </p>
 
-              {/* Kitaplığa Ekle Butonu */}
+              {/* Kalp İkonu */}
               <button
-                onClick={() => toggleLibrary(track)}
-                className="mt-2 flex items-center gap-1 text-sm text-primary hover:scale-105 transition"
+                onClick={() => toggleTrackInLibrary(track)}
+                className={`absolute top-3 right-3 p-1 rounded-full transition ${
+                  isInLibrary(track)
+                    ? "text-red-500 scale-110"
+                    : "text-gray-400 hover:text-red-500"
+                }`}
+                title="Kitaplığa Ekle/Çıkar"
               >
-                {library.find((item) => item.id === track.id) ? (
-                  <>
-                    <span className="font-medium">📘 Kitaplıkta</span>
-                  </>
-                ) : (
-                  <>
-                    <span>📚 Kitaplığıma ekle</span>
-                  </>
-                )}
+                <Heart fill={isInLibrary(track) ? "currentColor" : "none"} />
               </button>
 
-              {/* Örnek dinleme */}
               {track.preview_url && (
                 <audio
                   controls
