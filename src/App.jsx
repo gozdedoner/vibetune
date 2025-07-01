@@ -46,6 +46,7 @@ function App() {
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [aiPlaylist, setAiPlaylist] = useState([]);
   const [library, setLibrary] = useState(() => getLibraryFromStorage());
+  const [currentTrack, setCurrentTrack] = useState(null); // ✅ Eklendi
   const navigate = useNavigate();
 
   // LocalStorage güncelle
@@ -111,11 +112,32 @@ function App() {
         >
           <Route index element={<Home />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/player" element={<Player />} />
-          <Route path="/playlist" element={<Playlist />} />
+          <Route
+            path="/player"
+            element={<Player currentTrack={currentTrack} />} // ✅ Eklendi
+          />
+          <Route
+            path="/playlist"
+            element={
+              <Playlist
+                playlist={aiPlaylist}
+                library={library}
+                setLibrary={setLibrary}
+                setCurrentTrack={setCurrentTrack} // ✅ EKLENDİ
+              />
+            }
+          />
+
           <Route
             path="/search"
-            element={<Search spotifyToken={spotifyToken} />}
+            element={
+              <Search
+                spotifyToken={spotifyToken}
+                library={library}
+                setLibrary={setLibrary}
+                setCurrentTrack={setCurrentTrack} // ✅ Eklendi
+              />
+            }
           />
           <Route
             path="/library"
@@ -128,6 +150,7 @@ function App() {
                 playlist={aiPlaylist}
                 library={library}
                 setLibrary={setLibrary}
+                setCurrentTrack={setCurrentTrack} // ✅ Eklendi
               />
             }
           />

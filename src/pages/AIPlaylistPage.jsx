@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Music2, RefreshCcw, ArrowLeft, Heart } from "lucide-react";
+import { Music2, RefreshCcw, ArrowLeft, Heart, Play } from "lucide-react";
 
-const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
+const AIPlaylistPage = ({ playlist, library, setLibrary, setCurrentTrack }) => {
   const navigate = useNavigate();
 
   const isInLibrary = (track) => {
@@ -82,12 +82,18 @@ const AIPlaylistPage = ({ playlist, library, setLibrary }) => {
                 <Heart fill={isInLibrary(track) ? "currentColor" : "none"} />
               </button>
 
+              {/* Çal Butonu */}
               {track.preview_url && (
-                <audio
-                  controls
-                  src={track.preview_url}
-                  className="mt-3 w-full"
-                />
+                <button
+                  onClick={() => {
+                    setCurrentTrack(track);
+                    navigate("/player");
+                  }}
+                  className="mt-3 flex items-center gap-1 text-sm text-purple-600 hover:underline transition"
+                >
+                  <Play size={16} />
+                  Çal
+                </button>
               )}
             </div>
           ))}
