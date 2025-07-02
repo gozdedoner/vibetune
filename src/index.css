@@ -14,3 +14,8 @@ html {
 .slick-dots li.slick-active button:before {
   color: #9333ea; /* Tailwind'de primary */
 }
+
+
+.icon {
+  @apply text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white cursor-pointer transition;
+}

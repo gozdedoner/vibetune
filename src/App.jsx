@@ -15,18 +15,19 @@ import Playlist from "./pages/Playlist";
 import Search from "./pages/Search";
 import Library from "./pages/Library";
 import AIPlaylistPage from "./pages/AIPlaylistPage";
+import Signup from "./pages/Signup";
 
-// Layout ve Modallar
+// Layout ve Modal
 import Layout from "./layout/Layout";
 import AIPlaylistModal from "./modals/AIPlaylistModal";
 
-// LocalStorage Fonksiyonları
+// LocalStorage yardımcıları
 import {
   getLibraryFromStorage,
   saveLibraryToStorage,
 } from "./utils/libraryStorage";
 
-// Token alma
+// Token alma (backend'den güvenli şekilde)
 const getAccessToken = async () => {
   try {
     const response = await fetch(
@@ -46,15 +47,16 @@ function App() {
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [aiPlaylist, setAiPlaylist] = useState([]);
   const [library, setLibrary] = useState(() => getLibraryFromStorage());
-  const [currentTrack, setCurrentTrack] = useState(null); // ✅ Eklendi
+  const [currentTrack, setCurrentTrack] = useState(null);
+
   const navigate = useNavigate();
 
-  // LocalStorage güncelle
+  // Kitaplık güncelleme
   useEffect(() => {
     saveLibraryToStorage(library);
   }, [library]);
 
-  // Token çek
+  // Spotify token'ı alma
   useEffect(() => {
     async function fetchToken() {
       const token = await getAccessToken();
@@ -65,7 +67,7 @@ function App() {
     fetchToken();
   }, []);
 
-  // AI Playlist oluşturma
+  // AI playlist oluştur
   const handleGenerate = async (prompt) => {
     setIsLoading(true);
     try {
@@ -92,6 +94,7 @@ function App() {
 
   return (
     <>
+      {/* AI Playlist Modal */}
       <AIPlaylistModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -100,7 +103,12 @@ function App() {
         token={spotifyToken}
       />
 
+      {/* Yönlendirme yapısı */}
       <Routes>
+        {/* Layout'suz sayfa: Signup */}
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Layout içindeki sayfalar */}
         <Route
           path="/"
           element={
@@ -114,7 +122,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route
             path="/player"
-            element={<Player currentTrack={currentTrack} />} // ✅ Eklendi
+            element={<Player currentTrack={currentTrack} />}
           />
           <Route
             path="/playlist"
@@ -123,11 +131,10 @@ function App() {
                 playlist={aiPlaylist}
                 library={library}
                 setLibrary={setLibrary}
-                setCurrentTrack={setCurrentTrack} // ✅ EKLENDİ
+                setCurrentTrack={setCurrentTrack}
               />
             }
           />
-
           <Route
             path="/search"
             element={
@@ -135,7 +142,7 @@ function App() {
                 spotifyToken={spotifyToken}
                 library={library}
                 setLibrary={setLibrary}
-                setCurrentTrack={setCurrentTrack} // ✅ Eklendi
+                setCurrentTrack={setCurrentTrack}
               />
             }
           />
@@ -150,7 +157,7 @@ function App() {
                 playlist={aiPlaylist}
                 library={library}
                 setLibrary={setLibrary}
-                setCurrentTrack={setCurrentTrack} // ✅ Eklendi
+                setCurrentTrack={setCurrentTrack}
               />
             }
           />
@@ -160,6 +167,7 @@ function App() {
   );
 }
 
+// Router sarmalayıcı
 export default function WrappedApp() {
   return (
     <Router>

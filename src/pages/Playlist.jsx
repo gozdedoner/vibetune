@@ -7,9 +7,7 @@ import { useNavigate } from "react-router-dom";
 const Playlist = ({ playlist, library, setLibrary, setCurrentTrack }) => {
   const navigate = useNavigate();
 
-  const isInLibrary = (track) => {
-    return library.some((item) => item.id === track.id);
-  };
+  const isInLibrary = (track) => library.some((item) => item.id === track.id);
 
   const toggleTrackInLibrary = (track) => {
     if (isInLibrary(track)) {
@@ -17,11 +15,6 @@ const Playlist = ({ playlist, library, setLibrary, setCurrentTrack }) => {
     } else {
       setLibrary([...library, track]);
     }
-  };
-
-  const handlePlay = (track) => {
-    setCurrentTrack(track);
-    navigate("/player");
   };
 
   if (!playlist || playlist.length === 0) {
@@ -33,60 +26,68 @@ const Playlist = ({ playlist, library, setLibrary, setCurrentTrack }) => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-white dark:bg-zinc-900 text-black dark:text-white transition-colors duration-300">
-      <h1 className="text-3xl font-bold mb-4">🎶 AI Çalma Listesi</h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-6">
-        En son oluşturulan AI playlist aşağıda 👇
-      </p>
+    <div className="min-h-screen px-4 py-8 bg-gradient-to-br from-zinc-900 to-black text-white">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-6 text-center">
+          🎶 AI Çalma Listesi
+        </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {playlist.map((track, index) => (
-          <motion.div
-            key={track.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="relative bg-white/90 dark:bg-zinc-800/80 p-4 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer"
-          >
-            {/* Albüm resmi */}
-            <img
-              src={track.album?.images?.[0]?.url}
-              alt={track.name}
-              className="w-full h-48 object-cover rounded-md mb-3"
-              onClick={() => handlePlay(track)}
-            />
-
-            {/* Başlık ve sanatçı */}
-            <h3 className="text-lg font-semibold truncate">{track.name}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-              {track.artists?.map((a) => a.name).join(", ")}
-            </p>
-
-            {/* Kalp ikonu */}
-            <button
-              onClick={() => toggleTrackInLibrary(track)}
-              className={`absolute top-3 right-3 p-1 rounded-full transition ${
-                isInLibrary(track)
-                  ? "text-red-500 scale-110"
-                  : "text-gray-400 hover:text-red-500"
-              }`}
-              title="Kitaplığa Ekle/Çıkar"
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {playlist.map((track, index) => (
+            <motion.div
+              key={track.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-4 hover:scale-[1.02] transition-all duration-300"
             >
-              <Heart fill={isInLibrary(track) ? "currentColor" : "none"} />
-            </button>
+              <img
+                src={track.album?.images?.[0]?.url}
+                alt={track.name}
+                className="w-full h-48 object-cover rounded-lg mb-4 shadow"
+              />
 
-            {/* Play ikonu */}
-            {track.preview_url && (
+              <h3 className="text-xl font-semibold truncate">{track.name}</h3>
+              <p className="text-sm text-gray-300 truncate">
+                {track.artists?.map((a) => a.name).join(", ")}
+              </p>
+
+              {/* Kalp ikonu */}
               <button
-                onClick={() => handlePlay(track)}
-                className="absolute bottom-3 right-3 p-1 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition"
-                title="Şarkıyı Çal"
+                onClick={() => toggleTrackInLibrary(track)}
+                className={`absolute top-4 right-4 p-2 rounded-full transition ${
+                  isInLibrary(track)
+                    ? "text-red-500 scale-110"
+                    : "text-gray-400 hover:text-red-500"
+                }`}
+                title="Kitaplığa Ekle/Çıkar"
               >
-                <Play size={18} />
+                <Heart fill={isInLibrary(track) ? "currentColor" : "none"} />
               </button>
-            )}
-          </motion.div>
-        ))}
+
+              {/* Dinleme */}
+              {track.preview_url && (
+                <div className="mt-4 flex items-center justify-between gap-2">
+                  <audio
+                    controls
+                    src={track.preview_url}
+                    className="w-full rounded"
+                  />
+                  <button
+                    onClick={() => {
+                      setCurrentTrack(track);
+                      navigate("/player");
+                    }}
+                    className="p-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white"
+                    title="Şarkıyı Çal"
+                  >
+                    <Play size={18} />
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
